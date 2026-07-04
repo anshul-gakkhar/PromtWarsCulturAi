@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover — CulturAI</title>
+  <meta name="description" content="Explore AI-curated cultural trails, hidden gems, and interactive maps for your destination." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ════════════════════════════════════════════ -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">🧭</div>
+      <span class="nav-logo-name">Cultur<span>AI</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="discover.html" class="active">Discover</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="profile.html">My DNA</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="api-key-btn" class="btn btn-ghost btn-sm">+ Add API Key</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ DISCOVER LAYOUT ════════════════════════════════════════ -->
+<div class="discover-layout">
+
+  <!-- Trail Panel -->
+  <div class="trail-panel">
+    <div class="trail-header">
+      <div class="trail-meta">
+        <span id="dest-badge" class="badge badge-gold">🏰 Rajasthan</span>
+        <span id="vibe-badge" class="badge badge-purple">✦ All Vibes</span>
+      </div>
+      <h2 class="trail-title" id="trail-title">Cultural Trail</h2>
+      <p class="trail-sub" id="trail-sub">AI-curated places based on your selected vibe</p>
+
+      <!-- Search bar -->
+      <div class="search-wrap" style="margin-top:12px">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="trail-search" type="text" placeholder="Search another city (e.g. Kyoto, Paris) and press Enter..." style="padding:10px 16px 10px 40px;font-size:0.875rem;" />
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="trail-tabs">
+      <button class="trail-tab active" data-tab="places">Cultural Trail</button>
+      <button class="trail-tab" data-tab="gems">Hidden Gems 💎</button>
+    </div>
+
+    <!-- Trail list -->
+    <div class="trail-list" id="trail-list">
+      <div class="generating">
+        <div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div>
+        Curating your cultural trail...
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Panel -->
+  <div class="map-panel">
+    <div id="map"></div>
+
+    <!-- Map Overlay Card -->
+    <div class="map-overlay" id="map-overlay" style="display:none">
+      <h3 class="map-overlay-title" id="overlay-name">—</h3>
+      <p style="font-size:0.68rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px" id="overlay-type">—</p>
+      <p class="map-overlay-sub" id="overlay-desc">—</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" id="overlay-tags"></div>
+      <a id="overlay-link" href="#" class="btn btn-primary btn-sm" style="margin-top:12px;width:100%;justify-content:center">Hear Its Story →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ API KEY MODAL ═════════════════════════════════════════ -->
+<div class="overlay" id="api-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 style="font-family:var(--serif);margin-bottom:4px">🔑 Gemini API Key</h3><p style="font-size:0.82rem;color:var(--text-2)">Enable live AI story generation</p></div>
+      <button class="modal-close" id="api-modal-close">✕</button>
+    </div>
+    <div style="background:rgba(201,169,110,0.05);border:1px solid rgba(201,169,110,0.15);border-radius:12px;padding:16px;margin-bottom:20px;font-size:0.82rem;color:var(--text-2);line-height:1.6;">
+      Get your free API key from <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold)">Google AI Studio →</a>
+    </div>
+    <input class="input" id="api-key-input" type="password" placeholder="Paste your API key here" style="margin-bottom:8px;" />
+    <div id="api-key-status" style="font-size:0.78rem;color:var(--text-3);margin-bottom:16px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" id="api-key-save" style="flex:1">Save Key</button>
+      <button class="btn btn-ghost" id="api-modal-close2" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ── Discover Page Logic ────────────────────────────────────── */
+let map, markers = [], currentTab = 'places';
+let destId = getParam('dest') || 'rajasthan';
+let vibeId = getParam('vibe') || '';
+
+// Close modals
+document.getElementById('api-modal-close').addEventListener('click', () => document.getElementById('api-modal').classList.remove('open'));
+document.getElementById('api-modal-close2').addEventListener('click', () => document.getElementById('api-modal').classList.remove('open'));
+
+/* ── Init Map ─────────────────────────────────────────────── */
+function initMap(lat, lng) {
+  map = L.map('map', { zoomControl: false, attributionControl: true })
+    .setView([lat, lng], 7);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd', maxZoom: 19,
+  }).addTo(map);
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+}
+
+/* ── Custom Marker Icon ─────────────────────────────────────── */
+function createIcon(emoji, isGem = false) {
+  return L.divIcon({
+    html: `<div class="custom-pin${isGem?' gem-pin':''}"><div class="custom-pin-inner">${emoji}</div></div>`,
+    className: '',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -34],
+  });
+}
+
+/* ── Add Marker ─────────────────────────────────────────────── */
+function addMarker(place, isGem = false) {
+  if (!place.lat || !place.lng) return;
+  const m = L.marker([place.lat, place.lng], { icon: createIcon(place.emoji, isGem) })
+    .addTo(map)
+    .bindPopup(`
+      <div style="min-width:180px">
+        <div style="font-family:var(--serif);font-size:1rem;margin-bottom:4px;color:var(--text-1)">${place.emoji} ${place.name}</div>
+        <div style="font-size:0.7rem;color:var(--text-3);margin-bottom:8px">${place.location||''}</div>
+        <div style="font-size:0.78rem;color:var(--text-2);line-height:1.5;margin-bottom:10px">${(place.shortDesc||place.desc||'').slice(0,100)}...</div>
+        <a href="place.html?id=${place.id}" style="display:block;background:linear-gradient(135deg,var(--gold),var(--amber));color:#1A0F05;border:none;padding:6px 12px;border-radius:9999px;font-size:0.75rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none">Hear Its Story →</a>
+      </div>
+    `, { className: '' });
+
+  m.on('click', () => {
+    showOverlay(place);
+    // Highlight card
+    document.querySelectorAll('.place-card').forEach(c => c.classList.remove('active'));
+    const card = document.querySelector(`[data-id="${place.id}"]`);
+    if (card) { card.classList.add('active'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  });
+  markers.push(m);
+  return m;
+}
+
+/* ── Show Map Overlay ───────────────────────────────────────── */
+function showOverlay(place) {
+  const ov = document.getElementById('map-overlay');
+  document.getElementById('overlay-name').textContent = `${place.emoji} ${place.name}`;
+  document.getElementById('overlay-type').textContent = place.type || place.location || '';
+  document.getElementById('overlay-desc').textContent = (place.shortDesc || place.desc || '').slice(0, 120) + '...';
+  document.getElementById('overlay-link').href = `place.html?id=${place.id}`;
+  const tagsEl = document.getElementById('overlay-tags');
+  tagsEl.innerHTML = (place.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+  ov.style.display = 'block';
+}
+
+/* ── Render Place Cards ─────────────────────────────────────── */
+function renderPlaces(places) {
+  const list = document.getElementById('trail-list');
+  list.innerHTML = '';
+  if (!places.length) {
+    list.innerHTML = '<p style="color:var(--text-3);padding:20px;text-align:center;font-style:italic">No places found for this vibe.</p>';
+    return;
+  }
+  places.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'place-card';
+    card.dataset.id = p.id;
+    card.style.animation = `slideIn 0.4s ease ${i*0.06}s both`;
+    card.innerHTML = `
+      <div class="place-thumb">${p.emoji}</div>
+      <div class="place-body">
+        <div class="place-name">${p.name}</div>
+        <div class="place-loc">📍 ${p.location}</div>
+        <div class="place-snip">${p.shortDesc || ''}</div>
+        <div class="place-tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.place-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      if (p.lat && p.lng) {
+        map.setView([p.lat, p.lng], 11, { animate: true });
+        const marker = markers.find(m => {
+          const ll = m.getLatLng();
+          return Math.abs(ll.lat - p.lat) < 0.001 && Math.abs(ll.lng - p.lng) < 0.001;
+        });
+        if (marker) { marker.openPopup(); }
+        showOverlay(p);
+      }
+    });
+    list.appendChild(card);
+    addMarker(p, false);
+  });
+}
+
+/* ── Render Gem Cards ────────────────────────────────────────── */
+function renderGems(gems) {
+  const list = document.getElementById('trail-list');
+  list.innerHTML = '';
+  if (!gems || !gems.length) {
+    list.innerHTML = '<p style="color:var(--text-3);padding:20px;text-align:center;font-style:italic">No hidden gems mapped for this area yet.</p>';
+    return;
+  }
+
+  const label = document.createElement('div');
+  label.className = 'gems-label';
+  label.innerHTML = `💎 &nbsp; Hidden Gems — Known only to locals`;
+  list.appendChild(label);
+
+  gems.forEach((g, i) => {
+    const card = document.createElement('div');
+    card.className = 'gem-card';
+    card.style.animation = `slideIn 0.4s ease ${i*0.08}s both`;
+    card.innerHTML = `
+      <div class="gem-icon">${g.emoji}</div>
+      <div>
+        <div class="gem-name">${g.name}</div>
+        <div class="gem-desc">${g.desc}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      if (g.lat && g.lng) {
+        map.setView([g.lat, g.lng], 12, { animate: true });
+        addMarker({ ...g, shortDesc: g.desc }, true);
+        showOverlay({ ...g, shortDesc: g.desc });
+      }
+    });
+    list.appendChild(card);
+
+    // Add gem markers to map
+    if (g.lat && g.lng) addMarker({ ...g, shortDesc: g.desc }, true);
+  });
+}
+
+/* ── Tab Switching ───────────────────────────────────────────── */
+document.querySelectorAll('.trail-tab').forEach(tab => {
+  tab.addEventListener('click', async () => {
+    document.querySelectorAll('.trail-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+
+    // Clear existing markers
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    document.getElementById('map-overlay').style.display = 'none';
+
+    if (currentTab === 'places') {
+      renderPlaces(cachedPlaces || []);
+    } else {
+      if (!cachedGems) {
+        document.getElementById('trail-list').innerHTML = generatingHTML('Discovering hidden gems...');
+        const dest = CULTURAI_DATA.destinations.find(d => d.id === destId) || {name: destId};
+        
+        if (GEMINI.apiKey) {
+          cachedGems = await GEMINI.generateHiddenGems(dest.name);
+          if (!cachedGems) showToast('AI generation failed. Falling back to curated offline gems.', 'info');
+        } else {
+          showToast('No API key. Showing curated offline gems.', 'info');
+        }
+        
+        if (!cachedGems) cachedGems = CULTURAI_DATA.hiddenGems[destId] || [];
+        sessionStorage.setItem('culturai_gems', JSON.stringify(cachedGems));
+      }
+      renderGems(cachedGems || []);
+    }
+    
+    // Fit map bounds
+    if (markers.length) {
+      try { map.fitBounds(L.featureGroup(markers).getBounds().pad(0.2)); } catch(e) {}
+    }
+  });
+});
+
+/* ── Destination Search ──────────────────────────────────────── */
+document.getElementById('trail-search').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const val = this.value.trim().toLowerCase();
+    if (!val) return;
+    const dest = CULTURAI_DATA.destinations.find(d => d.name.toLowerCase().includes(val));
+    const id = dest ? dest.id : encodeURIComponent(val);
+    window.location.href = `discover.html?dest=${id}`;
+  }
+});
+
+/* ── Main Init ───────────────────────────────────────────────── */
+let cachedPlaces = null;
+let cachedGems = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const dest = CULTURAI_DATA.destinations.find(d => d.id === destId) || {id: destId, name: destId, emoji: '📍', tagline: 'Explore the unknown'};
+  
+  // Init map centered on destination (fallback coords)
+  initMap(26.4, 73.0); 
+
+  // Update header
+  document.getElementById('dest-badge').textContent = `${dest.emoji} ${dest.name}`;
+  document.getElementById('trail-title').textContent = `${dest.name} Cultural Trail`;
+  document.getElementById('trail-sub').textContent = dest.tagline;
+  if (vibeId) {
+    const vibe = CULTURAI_DATA.vibes.find(v => v.id === vibeId);
+    if (vibe) document.getElementById('vibe-badge').textContent = `${vibe.emoji} ${vibe.name}`;
+  }
+
+  // Generate or load trail
+  document.getElementById('trail-list').innerHTML = generatingHTML('Curating your cultural trail...');
+  
+  let places = null;
+  if (GEMINI.apiKey) {
+    places = await GEMINI.generateTrail(dest.name, vibeId);
+    if (!places) showToast('AI trail generation failed. Falling back to handcrafted offline trail.', 'error');
+  } else {
+    showToast('No API key. Showing handcrafted offline trail.', 'info');
+  }
+  
+  if (!places) {
+    const staticPlaces = CULTURAI_DATA.places[destId];
+    if (staticPlaces) {
+      places = vibeId ? staticPlaces.filter(p => p.vibes.includes(vibeId)) : staticPlaces;
+    } else {
+      places = [];
+      document.getElementById('trail-list').innerHTML = `
+        <div style="padding:40px 20px; text-align:center; color:var(--text-3);">
+          <div style="font-size:3rem; margin-bottom:16px;">✨</div>
+          <h3 style="color:var(--text-2); margin-bottom:12px; font-family:var(--serif);">Live AI Generation Required</h3>
+          <p style="font-size:0.9rem; line-height:1.6; max-width:300px; margin:0 auto;">
+            "${dest.name}" is not in our offline curated database. Please add a valid Gemini API key to dynamically generate cultural trails for any destination in the world.
+          </p>
+          <button class="btn btn-outline" style="margin-top:20px" onclick="document.getElementById('api-modal').classList.add('open')">Add API Key</button>
+        </div>
+      `;
+      return; // Stop execution here so we don't render an empty grid over the message
+    }
+  }
+  
+  cachedPlaces = places;
+  sessionStorage.setItem('culturai_trail', JSON.stringify(cachedPlaces));
+  
+  // Update map center if we have places
+  if (places && places.length && places[0].lat) {
+    map.setView([places[0].lat, places[0].lng], 7);
+  }
+
+  renderPlaces(places);
+
+  // Pan map to fit all markers
+  if (markers.length) {
+    try {
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.2));
+    } catch(e) {}
+  }
+});
+</script>
+</body>
+</html>

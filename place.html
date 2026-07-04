@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Place — CulturAI</title>
+  <meta name="description" content="Hear the story of this place through CulturAI's immersive AI-generated cultural narrative." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ════════════════════════════════════════════ -->
+<nav class="nav scrolled" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">🧭</div>
+      <span class="nav-logo-name">Cultur<span>AI</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="discover.html" class="active">Discover</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="profile.html">My DNA</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="api-key-btn" class="btn btn-ghost btn-sm">+ Add API Key</button>
+      <a href="discover.html" class="btn btn-ghost btn-sm">← Back to Trail</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ PLACE HERO ════════════════════════════════════════════ -->
+<div class="place-hero" id="place-hero">
+  <div class="place-hero-emoji" id="hero-emoji">🏰</div>
+  <div class="place-hero-grad"></div>
+  <div class="place-hero-content">
+    <div class="place-hero-eyebrow">
+      <span class="badge badge-gold" id="place-type">Heritage Site</span>
+      <span class="badge badge-purple" id="place-vibe">✦ Mystical</span>
+    </div>
+    <h1 class="place-hero-title" id="place-name">Loading...</h1>
+    <p class="place-hero-sub" id="place-location">—</p>
+  </div>
+</div>
+
+<!-- ═══ PLACE CONTENT ════════════════════════════════════════ -->
+<div class="place-layout" id="place-layout">
+
+  <!-- Main Column -->
+  <div class="place-main">
+
+    <!-- Whisper Box -->
+    <div class="whisper-box">
+      <div class="whisper-head">
+        <div class="whisper-chip">📝</div>
+        <div>
+          <div class="whisper-label">Place Summary</div>
+          <div class="whisper-sublabel" id="whisper-subtitle">AI-generated summary</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" id="tts-btn" title="Read aloud">🔊 Read Aloud</button>
+          <button class="btn btn-outline btn-sm" id="regenerate-btn" title="Regenerate story">↻ Regenerate</button>
+        </div>
+      </div>
+      <div class="whisper-text" id="whisper-content">
+        <div class="generating">
+          <div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div>
+          Loading summary...
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Timeline -->
+    <div class="card" style="margin-bottom:32px">
+      <h3 style="font-family:var(--serif);margin-bottom:6px;font-size:1.1rem">Through the Ages</h3>
+      <p style="font-size:0.8rem;color:var(--text-2);margin-bottom:24px;font-family:var(--reading)">A timeline of key moments that shaped this place</p>
+      <div class="timeline" id="timeline-content">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Cultural Tags -->
+    <div class="card reveal" style="margin-bottom:32px">
+      <h3 style="font-family:var(--serif);margin-bottom:16px;font-size:1rem">Cultural Dimensions</h3>
+      <div id="cultural-tags" style="display:flex;flex-wrap:wrap;gap:8px">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <div class="place-sidebar">
+
+    <!-- Quick Facts -->
+    <div class="sidebar-card" id="facts-card">
+      <div class="sidebar-ttl">Quick Facts</div>
+      <div id="quick-facts">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Connect with Guides -->
+    <div class="sidebar-card">
+      <div class="sidebar-ttl">Connect with a Local</div>
+      <p style="font-size:0.78rem;color:var(--text-2);margin-bottom:14px;font-family:var(--reading);line-height:1.5;">
+        AI-matched culture guides based on your DNA profile
+      </p>
+      <div id="guides-list">
+        <!-- Rendered by JS -->
+      </div>
+      <button class="btn btn-outline" style="width:100%;margin-top:12px;justify-content:center" onclick="showToast('Connecting you with local guides...','info')">
+        View All Guides →
+      </button>
+    </div>
+
+    <!-- Add to Trail -->
+    <div class="sidebar-card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:10px">🗺️</div>
+      <h3 style="font-family:var(--serif);font-size:1rem;margin-bottom:8px">Save to My Trail</h3>
+      <p style="font-size:0.78rem;color:var(--text-2);margin-bottom:14px;line-height:1.5">Add to your Cultural DNA journey and revisit anytime.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" id="save-trail-btn">
+        ♡ Save to Trail
+      </button>
+    </div>
+
+    <!-- Related Hidden Gems -->
+    <div class="sidebar-card">
+      <div class="sidebar-ttl">Nearby Hidden Gems 💎</div>
+      <div id="related-gems">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ API KEY MODAL ═════════════════════════════════════════ -->
+<div class="overlay" id="api-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 style="font-family:var(--serif);margin-bottom:4px">🔑 Gemini API Key</h3><p style="font-size:0.82rem;color:var(--text-2)">Enable live AI story generation</p></div>
+      <button class="modal-close" id="api-modal-close">✕</button>
+    </div>
+    <div style="background:rgba(201,169,110,0.05);border:1px solid rgba(201,169,110,0.15);border-radius:12px;padding:16px;margin-bottom:20px;font-size:0.82rem;color:var(--text-2);line-height:1.6;">
+      Get your free key from <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold)">Google AI Studio →</a>
+    </div>
+    <input class="input" id="api-key-input" type="password" placeholder="Paste your API key here" style="margin-bottom:8px;" />
+    <div id="api-key-status" style="font-size:0.78rem;color:var(--text-3);margin-bottom:16px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" id="api-key-save" style="flex:1">Save Key</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('api-modal').classList.remove('open')" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+<footer class="footer" style="margin-top:80px">
+  <div class="footer-inner">
+    <div class="footer-brand">🧭 CulturAI — Every place has a soul.</div>
+    <div class="footer-links">
+      <a href="discover.html">Discover</a>
+      <a href="events.html">Events</a>
+      <a href="profile.html">My DNA</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ── Place Page Logic ─────────────────────────────────────────── */
+const placeId = getParam('id') || 'mehrangarh';
+let place = null;
+let whisperInterval = null;
+
+// Close modals
+document.getElementById('api-modal-close').addEventListener('click', () => document.getElementById('api-modal').classList.remove('open'));
+
+
+
+/* ── Render Whisper ───────────────────────────────────────────── */
+async function loadWhisper() {
+  const content = document.getElementById('whisper-content');
+  content.innerHTML = `
+    <div class="generating">
+      <div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div>
+      ${GEMINI.apiKey ? 'Generating with Gemini AI...' : 'The place is speaking...'}
+    </div>
+  `;
+
+  const destId = findDestForPlace(placeId);
+  const destName = CULTURAI_DATA.destinations.find(d => d.id === destId)?.name || destId;
+  const paragraphs = await GEMINI.getWhisper(placeId, place.name, destName, place.shortDesc);
+  
+  if (GEMINI.apiKey && (!paragraphs || paragraphs.length < 2)) {
+    showToast('AI story generation failed. Falling back to curated offline story.', 'info');
+  }
+  
+  content.innerHTML = '';
+
+  paragraphs.forEach((text, idx) => {
+    const p = document.createElement('p');
+    content.appendChild(p);
+    setTimeout(() => {
+      typewriterEffect(p, text, 10);
+    }, idx * 3200);
+  });
+
+  document.getElementById('whisper-subtitle').textContent = GEMINI.apiKey
+    ? `Live · Gemini ${GEMINI.model} · ${place.name}`
+    : `Curated summary · ${place.name}`;
+}
+
+// Text to Speech
+let isSpeaking = false;
+document.getElementById('tts-btn').addEventListener('click', function() {
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    isSpeaking = false;
+    this.textContent = '🔊 Read Aloud';
+    return;
+  }
+  const text = Array.from(document.getElementById('whisper-content').querySelectorAll('p')).map(p => p.textContent).join(' ');
+  if (!text) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.onend = () => {
+    isSpeaking = false;
+    document.getElementById('tts-btn').textContent = '🔊 Read Aloud';
+  };
+  window.speechSynthesis.speak(utterance);
+  isSpeaking = true;
+  this.textContent = '⏹️ Stop Reading';
+});
+
+/* ── Render Timeline ──────────────────────────────────────────── */
+function renderTimeline(timeline) {
+  const el = document.getElementById('timeline-content');
+  el.innerHTML = (timeline || []).map(t => `
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">${t.year}</div>
+      <div class="tl-text">${t.text}</div>
+    </div>
+  `).join('');
+}
+
+/* ── Render Guides ────────────────────────────────────────────── */
+function renderGuides(guides) {
+  const el = document.getElementById('guides-list');
+  el.innerHTML = (guides || []).map(g => `
+    <div class="guide-row">
+      <div class="guide-avatar">${g.avatar}</div>
+      <div class="guide-info">
+        <div class="guide-name">${g.name}</div>
+        <div class="guide-role">${g.role}</div>
+      </div>
+      <div class="guide-stars">${g.rating}</div>
+    </div>
+  `).join('');
+}
+
+/* ── Render Quick Facts ───────────────────────────────────────── */
+function renderFacts(place) {
+  const facts = [
+    { icon: '📍', label: 'Location', value: place.location },
+    { icon: '🏷️', label: 'Type',     value: place.type },
+    { icon: '⭐', label: 'Rating',   value: `${place.rating}/5.0` },
+    { icon: '💡', label: 'Best For', value: (place.vibes||[]).join(', ') },
+  ];
+  document.getElementById('quick-facts').innerHTML = facts.map(f => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-f)">
+      <span style="font-size:1rem;flex-shrink:0">${f.icon}</span>
+      <div>
+        <div style="font-size:0.65rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em">${f.label}</div>
+        <div style="font-size:0.85rem;color:var(--text-1);font-weight:500">${f.value}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Render Related Gems (By Distance) ────────────────────────── */
+function renderRelatedGems() {
+  if (!place || !place.lat || !place.lng) return;
+  
+  // Flatten all places from all destinations
+  let allPlaces = [];
+  Object.values(CULTURAI_DATA.places).forEach(arr => allPlaces.push(...arr));
+  
+  // Calculate euclidean distance
+  allPlaces.forEach(p => {
+    if (p.id === place.id || !p.lat || !p.lng) { p._dist = Infinity; return; }
+    const dLat = p.lat - place.lat;
+    const dLng = p.lng - place.lng;
+    p._dist = Math.sqrt(dLat*dLat + dLng*dLng);
+  });
+  
+  // Sort by distance and pick top 3
+  const nearby = allPlaces.sort((a, b) => a._dist - b._dist).slice(0, 3);
+
+  const el = document.getElementById('related-gems');
+  el.innerHTML = nearby.length ? nearby.map(g => `
+    <div class="gem-card" onclick="window.location.href='place.html?id=${g.id}'" style="cursor:pointer;margin-bottom:8px;display:flex;gap:12px;align-items:center;">
+      <div class="gem-icon" style="font-size:1.8rem;">${g.emoji}</div>
+      <div>
+        <div class="gem-name" style="font-size:0.9rem;font-weight:500;color:var(--text-1);">${g.name}</div>
+        <div class="gem-desc" style="font-size:0.75rem;color:var(--text-2);">${(g.shortDesc||'').slice(0,80)}...</div>
+      </div>
+    </div>
+  `).join('') : '<p style="font-size:0.78rem;color:var(--text-3);font-style:italic">No nearby gems found.</p>';
+}
+
+/* ── Parallax on Hero Emoji ───────────────────────────────────── */
+function initParallax() {
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const emoji = document.getElementById('hero-emoji');
+    if (emoji) emoji.style.transform = `translateY(${y * 0.3}px)`;
+  }, { passive: true });
+}
+
+/* ── Find Destination for Place ───────────────────────────────── */
+function findDestForPlace(placeId) {
+  for (const [destId, places] of Object.entries(CULTURAI_DATA.places)) {
+    if (places.find(p => p.id === placeId)) return destId;
+  }
+  return 'rajasthan';
+}
+
+/* ── Save Trail Button ────────────────────────────────────────── */
+document.getElementById('save-trail-btn').addEventListener('click', function() {
+  this.textContent = '✓ Saved!';
+  this.style.background = 'linear-gradient(135deg,var(--sage),#5E9948)';
+  showToast('Added to your Cultural Trail!', 'success');
+  setTimeout(() => {
+    this.textContent = '♡ Save to Trail';
+    this.style.background = '';
+  }, 2500);
+});
+
+/* ── Regenerate Button ────────────────────────────────────────── */
+document.getElementById('regenerate-btn').addEventListener('click', () => {
+  loadWhisper();
+});
+
+/* ── Main Init ────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Find place
+  place = findPlaceById(placeId);
+  if (!place) {
+    document.getElementById('place-name').textContent = 'Place not found';
+    return;
+  }
+
+  const destId = findDestForPlace(placeId);
+
+  // Update page title & meta
+  document.getElementById('page-title').textContent = `${place.name} — CulturAI`;
+  document.getElementById('hero-emoji').textContent = place.emoji;
+  document.getElementById('place-name').textContent = place.name;
+  document.getElementById('place-location').textContent = `📍 ${place.location}`;
+  document.getElementById('place-type').textContent = place.type || 'Cultural Site';
+  document.getElementById('place-vibe').textContent = `${CULTURAI_DATA.vibes.find(v => v.id === (place.vibes||[])[0])?.emoji || '✦'} ${(place.vibes||[])[0]?.charAt(0).toUpperCase() + (place.vibes||[])[0]?.slice(1) || 'Cultural'}`;
+  document.getElementById('audio-title').textContent = `🎧 Audio Journey — ${place.name}`;
+
+  // Cultural tags - initial render
+  const tagsEl = document.getElementById('cultural-tags');
+  const badgeClasses = ['badge-gold','badge-purple','badge-teal','badge-rose','badge-sage','badge-amber'];
+  
+  function renderTags(tags) {
+    tagsEl.innerHTML = '';
+    (tags || []).forEach((tag, i) => {
+      const a = document.createElement('a');
+      a.className = `badge ${badgeClasses[i % badgeClasses.length]}`;
+      a.textContent = tag;
+      // Search Wikipedia for the tag context
+      a.href = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(tag + ' ' + place.name)}`;
+      a.target = '_blank';
+      a.style.textDecoration = 'none';
+      tagsEl.appendChild(a);
+    });
+  }
+  renderTags(place.tags);
+
+  // Live AI Details (Timeline, Guides, Tags)
+  if (GEMINI.apiKey) {
+    const destName = CULTURAI_DATA.destinations.find(d => d.id === destId)?.name || destId;
+    const details = await GEMINI.generatePlaceDetail(place.name, destName);
+    if (details) {
+      if (details.tags) renderTags(details.tags);
+      if (details.timeline) place.timeline = details.timeline;
+      if (details.guides) place.guides = details.guides;
+      if (details.type) document.getElementById('place-type').textContent = details.type;
+      if (details.googleRating) place.rating = details.googleRating;
+    } else {
+      showToast('AI details generation failed. Showing offline curated details.', 'error');
+    }
+  } else {
+    showToast('No API key. Showing offline curated place details.', 'info');
+  }
+
+  // Render sections after AI details might have updated 'place'
+  renderTimeline(place.timeline);
+  renderGuides(place.guides);
+  renderFacts(place);
+  renderRelatedGems();
+
+  // Init parallax
+  initParallax();
+  initReveal();
+
+  // Load whisper (main feature)
+  await loadWhisper();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturAI — Every Place Has a Soul</title>
+  <meta name="description" content="A GenAI-powered cultural travel platform that helps you discover hidden gems, hear the stories of ancient places, and connect with authentic cultural experiences." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══════════════════════════════════════════ -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">🧭</div>
+      <span class="nav-logo-name">Cultur<span>AI</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="discover.html">Discover</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="profile.html">My DNA</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="api-key-btn" class="btn btn-ghost btn-sm">+ Add API Key</button>
+      <a href="discover.html" class="btn btn-primary btn-sm">Start Exploring →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
+    <canvas id="particle-canvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow anim-1">✦ &nbsp; GenAI Cultural Discovery Platform</div>
+
+    <h1 class="hero-title anim-2">
+      Every place<br />has a <em>soul.</em><br />Let it speak.
+    </h1>
+
+    <p class="hero-subtitle anim-3">
+      CulturAI uses Generative AI to transform passive sightseeing into living storytelling — uncovering hidden gems, oral histories, and authentic cultural experiences you'll never find on TripAdvisor.
+    </p>
+
+    <div class="hero-search anim-4">
+      <div class="search-wrap">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="hero-search" type="text" placeholder="Search a destination — Rajasthan, Kerala, Varanasi..." autocomplete="off" />
+        <button class="btn btn-primary btn-sm search-btn" id="hero-search-btn">Explore →</button>
+      </div>
+    </div>
+
+    <div class="hero-search-hint anim-5">
+      <span>🏰 Rajasthan</span>
+      <span>🌴 Kerala</span>
+      <span>🪔 Varanasi</span>
+      <span>🗿 Hampi</span>
+      <span>⛰️ Ladakh</span>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ═══ STATS ══════════════════════════════════════════════════ -->
+<div class="container">
+  <div class="stat-row reveal">
+    <div class="stat-item">
+      <div class="stat-number" data-count="2400" data-suffix="+">2400+</div>
+      <div class="stat-label">Cultural Places</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-count="340" data-suffix="">340</div>
+      <div class="stat-label">Hidden Gems Mapped</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-count="48" data-suffix="">48</div>
+      <div class="stat-label">Endangered Traditions</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-count="120" data-suffix="+">120+</div>
+      <div class="stat-label">Local Culture Guides</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIBE SELECTOR ══════════════════════════════════════════ -->
+<section class="vibe-section">
+  <div class="container">
+    <div class="section-eyebrow reveal">Choose Your Cultural Vibe</div>
+    <h2 class="section-title reveal">How do you <em style="font-style:italic;color:var(--gold)">travel?</em></h2>
+    <p class="section-sub reveal">Not all travelers are the same. Select your vibe and CulturAI curates a trail built for your soul.</p>
+
+    <div class="vibes-grid" id="vibes-grid">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div style="text-align:center;margin-top:32px;" class="reveal">
+      <a href="discover.html" class="btn btn-primary" id="vibe-explore-btn">Curate My Cultural Trail →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow reveal">What Makes CulturAI Different</div>
+    <h2 class="section-title reveal" style="margin-bottom:48px">Built for <em style="color:var(--gold);font-style:italic">depth,</em> not distance</h2>
+
+    <div class="features-grid">
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(201,169,110,0.1);border-color:rgba(201,169,110,0.2)">🎙️</div>
+        <h3 class="feature-title">Whisper of the Place</h3>
+        <p class="feature-text">Gemini AI generates cinematic first-person narratives — as if Mehrangarh Fort or the Varanasi Ghats are speaking directly to you. Not dry facts. Pure immersion.</p>
+      </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <div class="feature-icon" style="background:rgba(78,205,196,0.1);border-color:rgba(78,205,196,0.2)">💎</div>
+        <h3 class="feature-title">Hidden Gem Radar</h3>
+        <p class="feature-text">AI surfaces hyperlocal places not found on mainstream platforms — dying craft villages, underground rituals, and generational restaurants known only to locals.</p>
+      </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <div class="feature-icon" style="background:rgba(139,124,246,0.1);border-color:rgba(139,124,246,0.2)">🧬</div>
+        <h3 class="feature-title">Cultural DNA Profile</h3>
+        <p class="feature-text">Every interaction builds your Cultural DNA fingerprint — a visual map of your curiosity across 6 dimensions: Heritage, Mystical, Culinary, Art, Hidden Gems, and more.</p>
+      </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.3s">
+        <div class="feature-icon" style="background:rgba(232,98,122,0.1);border-color:rgba(232,98,122,0.2)">🎧</div>
+        <h3 class="feature-title">Immersive Audio Journeys</h3>
+        <p class="feature-text">AI-generated narrated audio walks that sync with your GPS location — like a podcast that knows exactly where you're standing, playing as you walk through history.</p>
+      </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <div class="feature-icon" style="background:rgba(212,119,58,0.1);border-color:rgba(212,119,58,0.2)">🤝</div>
+        <h3 class="feature-title">Connect with Culture Guides</h3>
+        <p class="feature-text">Matched by AI to your DNA profile — not generic tour guides, but vetted local artisans, historians, storytellers, and ritual performers. Real cultural custodians.</p>
+      </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <div class="feature-icon" style="background:rgba(127,176,105,0.1);border-color:rgba(127,176,105,0.2)">🏛️</div>
+        <h3 class="feature-title">Heritage Preservation Layer</h3>
+        <p class="feature-text">Contribute disappearing stories — voice notes, elder interviews, undocumented rituals. AI processes and weaves them into a living cultural archive for future travelers.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DESTINATIONS PREVIEW ═══════════════════════════════════ -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-eyebrow reveal">Featured Destinations</div>
+    <h2 class="section-title reveal" style="margin-bottom:40px">Start your journey</h2>
+
+    <div style="overflow: hidden; white-space: nowrap; position: relative; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);" id="dest-marquee-container">
+      <div id="dest-marquee" style="display: inline-block; white-space: nowrap; animation: scrollMarquee 35s linear infinite;">
+        <!-- Rendered by JS -->
+      </div>
+      <style>
+        @keyframes scrollMarquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .marquee-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          margin-right: 40px;
+          padding: 12px 24px;
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 99px;
+          font-family: var(--serif);
+          font-size: 1.1rem;
+          color: var(--text-2);
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+        .marquee-item:hover {
+          background: rgba(201,169,110,0.1);
+          border-color: rgba(201,169,110,0.3);
+          color: var(--gold);
+        }
+      </style>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BANNER ══════════════════════════════════════════════ -->
+<div class="container">
+  <div class="cta-banner reveal">
+    <div class="hero-eyebrow" style="justify-content:center;margin-bottom:20px">✦ &nbsp; India-First. Globally Expanding.</div>
+    <h2 style="font-family:var(--serif);margin-bottom:16px">Begin your cultural journey today</h2>
+    <p style="color:var(--text-2);margin-bottom:32px;font-family:var(--reading);font-size:1.05rem;max-width:500px;margin-left:auto;margin-right:auto;">
+      Pick a destination. Let AI build your cultural trail. Hear the places speak.
+    </p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="discover.html" class="btn btn-primary">Explore Destinations →</a>
+      <a href="events.html"   class="btn btn-ghost">Upcoming Festivals</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">🧭 CulturAI — Every place has a soul.</div>
+    <div class="footer-links">
+      <a href="discover.html">Discover</a>
+      <a href="events.html">Events</a>
+      <a href="profile.html">My DNA</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ API KEY MODAL ════════════════════════════════════════════ -->
+<div class="overlay" id="api-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 style="font-family:var(--serif);margin-bottom:4px">🔑 Gemini API Key</h3>
+        <p style="font-size:0.82rem;color:var(--text-2)">Enable live AI story generation</p>
+      </div>
+      <button class="modal-close" id="api-modal-close">✕</button>
+    </div>
+    <div style="background:rgba(201,169,110,0.05);border:1px solid rgba(201,169,110,0.15);border-radius:12px;padding:16px;margin-bottom:20px;font-size:0.82rem;color:var(--text-2);line-height:1.6;">
+      Get your free API key from <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold)">Google AI Studio →</a><br/>
+      Without a key, CulturAI uses rich handcrafted stories. With a key, every story is generated live by Gemini.
+    </div>
+    <input class="input" id="api-key-input" type="password" placeholder="Paste your API key here" style="margin-bottom:8px;" />
+    <div id="api-key-status" style="font-size:0.78rem;color:var(--text-3);margin-bottom:16px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" id="api-key-save" style="flex:1">Save Key</button>
+      <button class="btn btn-ghost" id="api-modal-close2" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Init particles
+  initParticles('particle-canvas');
+
+  // Render vibe grid
+  const vibesGrid = document.getElementById('vibes-grid');
+  let selectedVibe = getParam('vibe') || '';
+  CULTURAI_DATA.vibes.forEach(v => {
+    const card = document.createElement('div');
+    card.className = `vibe-card ${v.cls} reveal`;
+    card.dataset.vibe = v.id;
+    if (v.id === selectedVibe) card.classList.add('active');
+    card.innerHTML = `
+      <span class="vibe-icon">${v.emoji}</span>
+      <span class="vibe-name">${v.name}</span>
+      <span class="vibe-desc">${v.desc}</span>
+    `;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.vibe-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedVibe = v.id;
+    });
+    vibesGrid.appendChild(card);
+  });
+
+  // Vibe explore button
+  document.getElementById('vibe-explore-btn').addEventListener('click', e => {
+    if (selectedVibe) {
+      e.preventDefault();
+      window.location.href = `discover.html?vibe=${selectedVibe}&dest=rajasthan`;
+    }
+  });
+
+  // Hero search
+  const searchInput = document.getElementById('hero-search');
+  const searchBtn   = document.getElementById('hero-search-btn');
+  function doSearch() {
+    const val = searchInput.value.trim().toLowerCase();
+    if (!val) return;
+    const dest = CULTURAI_DATA.destinations.find(d => d.name.toLowerCase().includes(val));
+    const id = dest ? dest.id : encodeURIComponent(val);
+    window.location.href = `discover.html?dest=${id}&vibe=${selectedVibe||''}`;
+  }
+  searchBtn.addEventListener('click', doSearch);
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  // Scrolling Cities Marquee
+  const cities = [
+    {n: 'Kyoto', e: '🌸'}, {n: 'Rome', e: '🏛️'}, {n: 'Istanbul', e: '🕌'}, 
+    {n: 'Oaxaca', e: '🏺'}, {n: 'Marrakech', e: '🐪'}, {n: 'Kathmandu', e: '⛰️'}, 
+    {n: 'Varanasi', e: '🪔'}, {n: 'Havana', e: '💃'}, {n: 'Cusco', e: '🦙'}, 
+    {n: 'Rajasthan', e: '🐪'}, {n: 'Bali', e: '🌺'}, {n: 'Athens', e: '🏛️'}, 
+    {n: 'Cairo', e: '🏜️'}, {n: 'Bhutan', e: '🐉'}, {n: 'Kerala', e: '🌴'}, 
+    {n: 'Lisbon', e: '🚋'}, {n: 'Jerusalem', e: '🕍'}, {n: 'Petra', e: '🏺'},
+    {n: 'Luang Prabang', e: '🛕'}, {n: 'Seville', e: '🎸'}
+  ];
+  
+  const marquee = document.getElementById('dest-marquee');
+  // Duplicate the list so it scrolls seamlessly
+  const marqueeCities = [...cities, ...cities];
+  
+  marqueeCities.forEach((city) => {
+    const link = document.createElement('a');
+    link.href = `discover.html?dest=${encodeURIComponent(city.n.toLowerCase())}`;
+    link.className = 'marquee-item';
+    link.innerHTML = `<span>${city.e}</span> <span>${city.n}</span>`;
+    marquee.appendChild(link);
+  });
+
+  // Animate counters when visible
+  const statRow = document.querySelector('.stat-row');
+  if (statRow) {
+    const obs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { animateCounters(); obs.disconnect(); }
+    }, { threshold: 0.5 });
+    obs.observe(statRow);
+  }
+
+  // API modal close 2
+  const close2 = document.getElementById('api-modal-close2');
+  if (close2) close2.addEventListener('click', () => document.getElementById('api-modal').classList.remove('open'));
+
+  initReveal();
+});
+</script>
+</body>
+</html>

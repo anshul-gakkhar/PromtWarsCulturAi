@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cultural Events — CulturAI</title>
+  <meta name="description" content="Discover upcoming cultural festivals, rituals, and events across India with AI-generated cultural context." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ════════════════════════════════════════════ -->
+<nav class="nav scrolled" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">🧭</div>
+      <span class="nav-logo-name">Cultur<span>AI</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="discover.html">Discover</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="profile.html">My DNA</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="api-key-btn" class="btn btn-ghost btn-sm">+ Add API Key</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ EVENTS PAGE ════════════════════════════════════════════ -->
+<div class="events-page">
+
+  <div class="events-header">
+    <div class="hero-eyebrow" style="margin-bottom:16px">✦ &nbsp; AI-Enriched Cultural Calendar</div>
+    <h1 style="font-family:var(--serif);font-size:clamp(2rem,4vw,3.5rem);margin-bottom:16px">
+      Festivals & <em style="font-style:italic;color:var(--gold)">Rituals</em>
+    </h1>
+    <p style="color:var(--text-2);font-family:var(--reading);font-size:1.05rem;max-width:540px;line-height:1.7;margin-bottom:32px">
+      Not just event listings — Gemini AI generates the cultural context behind every festival, so you understand <em>why</em> it matters before you go.
+    </p>
+
+    <!-- Filters -->
+    <div class="events-filters" id="event-filters">
+      <button class="filter-chip active" data-filter="all">All Events</button>
+      <button class="filter-chip" data-filter="festivals">🎭 Festivals</button>
+      <button class="filter-chip" data-filter="mystical">🔮 Mystical</button>
+      <button class="filter-chip" data-filter="art">🎨 Art & Culture</button>
+      <button class="filter-chip" data-filter="culinary">🍛 Culinary</button>
+    </div>
+  </div>
+
+  <!-- Events Grid -->
+  <div class="events-grid" id="events-grid">
+    <!-- Rendered by JS -->
+  </div>
+
+</div>
+
+<!-- ═══ EVENT DETAIL MODAL ═════════════════════════════════════ -->
+<div class="overlay" id="event-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-head">
+      <div>
+        <div id="modal-emoji" style="font-size:2rem;margin-bottom:8px">🎭</div>
+        <h3 id="modal-name" style="font-family:var(--serif);font-size:1.4rem;margin-bottom:4px">—</h3>
+        <div id="modal-date" style="font-size:0.78rem;color:var(--text-3)">—</div>
+      </div>
+      <button class="modal-close" id="event-modal-close">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="modal-badges"></div>
+    <div style="background:rgba(201,169,110,0.04);border:1px solid var(--border-g);border-radius:12px;padding:20px;margin-bottom:20px;">
+      <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px">🎙️ AI Cultural Context</div>
+      <p id="modal-context" style="font-family:var(--reading);font-size:0.95rem;color:var(--text-w);line-height:1.8;font-weight:300">—</p>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border-f)">
+      <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-3)">
+        <span>📍</span><span id="modal-location">—</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-3)">
+        <span>👥</span><span id="modal-attendance">—</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="showToast('Adding to your cultural calendar!','success')">+ Add to My Calendar</button>
+      <button class="btn btn-ghost" id="event-modal-close2" style="flex:1;justify-content:center">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ API KEY MODAL ═════════════════════════════════════════ -->
+<div class="overlay" id="api-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 style="font-family:var(--serif);margin-bottom:4px">🔑 Gemini API Key</h3><p style="font-size:0.82rem;color:var(--text-2)">Enable live AI story generation</p></div>
+      <button class="modal-close" id="api-modal-close">✕</button>
+    </div>
+    <div style="background:rgba(201,169,110,0.05);border:1px solid rgba(201,169,110,0.15);border-radius:12px;padding:16px;margin-bottom:20px;font-size:0.82rem;color:var(--text-2);line-height:1.6;">
+      Get your free key from <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold)">Google AI Studio →</a>
+    </div>
+    <input class="input" id="api-key-input" type="password" placeholder="Paste your API key here" style="margin-bottom:8px;" />
+    <div id="api-key-status" style="font-size:0.78rem;color:var(--text-3);margin-bottom:16px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" id="api-key-save" style="flex:1">Save Key</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('api-modal').classList.remove('open')" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">🧭 CulturAI — Every place has a soul.</div>
+    <div class="footer-links">
+      <a href="discover.html">Discover</a>
+      <a href="events.html">Events</a>
+      <a href="profile.html">My DNA</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ── Events Page Logic ────────────────────────────────────────── */
+let activeFilter = 'all';
+
+/* ── Banner Gradients per vibe ─────────────────────────────────── */
+const BANNER_GRADIENTS = {
+  festivals: 'linear-gradient(135deg,rgba(201,169,110,0.15),rgba(212,119,58,0.1))',
+  mystical:  'linear-gradient(135deg,rgba(139,124,246,0.15),rgba(78,205,196,0.08))',
+  art:       'linear-gradient(135deg,rgba(78,205,196,0.15),rgba(127,176,105,0.1))',
+  culinary:  'linear-gradient(135deg,rgba(232,98,122,0.15),rgba(201,169,110,0.1))',
+};
+
+/* ── Render Events ─────────────────────────────────────────────── */
+function renderEvents(events) {
+  const grid = document.getElementById('events-grid');
+  grid.innerHTML = '';
+
+  const filtered = activeFilter === 'all' ? events : events.filter(e => e.vibe === activeFilter);
+
+  if (!filtered.length) {
+    grid.innerHTML = '<p style="color:var(--text-3);text-align:center;font-style:italic;grid-column:1/-1;padding:40px">No events match this filter.</p>';
+    return;
+  }
+
+  filtered.forEach((ev, i) => {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    card.style.animation = `fadeInUp 0.5s ease ${i * 0.07}s both`;
+    card.innerHTML = `
+      <div class="event-banner" style="background:${BANNER_GRADIENTS[ev.vibe]||'var(--bg-card)'}">
+        ${ev.emoji}
+      </div>
+      <div class="event-body">
+        <div class="event-date">📅 ${ev.date}</div>
+        <h3 class="event-name">${ev.name}</h3>
+        <p class="event-ctx">${ev.context}</p>
+        <div class="event-foot">
+          <div class="event-loc">📍 ${ev.location}</div>
+          <span class="badge ${ev.badge}">${ev.category}</span>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => openEventModal(ev));
+    grid.appendChild(card);
+  });
+}
+
+/* ── Open Event Modal ─────────────────────────────────────────── */
+function openEventModal(ev) {
+  document.getElementById('modal-emoji').textContent = ev.emoji;
+  document.getElementById('modal-name').textContent = ev.name;
+  document.getElementById('modal-date').textContent = `📅 ${ev.date}`;
+  document.getElementById('modal-context').textContent = ev.context;
+  document.getElementById('modal-location').textContent = ev.location;
+  document.getElementById('modal-attendance').textContent = `~${ev.attendance} attendees`;
+  document.getElementById('modal-badges').innerHTML = `
+    <span class="badge ${ev.badge}">${ev.category}</span>
+    <span class="badge badge-purple">✦ ${ev.vibe?.charAt(0).toUpperCase()}${ev.vibe?.slice(1)||''}</span>
+  `;
+  document.getElementById('event-modal').classList.add('open');
+}
+
+/* ── Filters ──────────────────────────────────────────────────── */
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    renderEvents(cachedEvents || []);
+  });
+});
+
+/* ── Close Modals ─────────────────────────────────────────────── */
+document.getElementById('event-modal-close').addEventListener('click',  () => document.getElementById('event-modal').classList.remove('open'));
+document.getElementById('event-modal-close2').addEventListener('click', () => document.getElementById('event-modal').classList.remove('open'));
+document.getElementById('event-modal').addEventListener('click', e => { if (e.target === document.getElementById('event-modal')) document.getElementById('event-modal').classList.remove('open'); });
+document.getElementById('api-modal-close').addEventListener('click', () => document.getElementById('api-modal').classList.remove('open'));
+
+/* ── Init ─────────────────────────────────────────────────────── */
+let cachedEvents = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const grid = document.getElementById('events-grid');
+  
+  if (GEMINI.apiKey) {
+    grid.innerHTML = generatingHTML('Discovering live cultural events...');
+    const generated = await GEMINI.generateEvents('India'); // Generate general events across the region
+    if (generated && generated.length) {
+      cachedEvents = generated;
+    } else {
+      showToast('AI events generation failed. Falling back to curated offline events.', 'error');
+    }
+  } else {
+    showToast('No API key. Showing curated offline events.', 'info');
+  }
+  
+  if (!cachedEvents) {
+    cachedEvents = CULTURAI_DATA.events;
+  }
+  
+  renderEvents(cachedEvents);
+  initReveal();
+});
+</script>
+</body>
+</html>
