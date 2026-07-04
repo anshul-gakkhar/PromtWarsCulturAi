@@ -1,3 +1,18 @@
+
+/**
+ * Sanitizes a string to prevent XSS.
+ * @param {string} str - The unsafe string.
+ * @returns {string} The safe HTML string.
+ */
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 /* ================================================================
    CulturAI — App Core
    Navigation, Animations, Gemini Live AI, Shared Utilities
@@ -107,6 +122,11 @@ function renderWhisper(container, paragraphs) {
 /* ════════════════════════════════════════════════════════════
    JSON parser — strips markdown fences Gemini sometimes returns
    ════════════════════════════════════════════════════════════ */
+/**
+ * Parses a raw JSON string returned by Gemini.
+ * @param {string} raw - Raw API response.
+ * @returns {Object|null} Parsed JSON object.
+ */
 function parseGeminiJSON(text) {
   // Extract content between the first [ or { and the last ] or }
   const match = text.match(/[\{\[][\s\S]*[\}\]]/);
